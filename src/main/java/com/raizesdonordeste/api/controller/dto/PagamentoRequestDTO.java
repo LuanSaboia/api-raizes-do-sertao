@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class PagamentoRequestDTO {
 
-    @NotBlank(message = "A forma de pagamento é obrigatória (ex: PIX, CARTAO, MOCK).")
+    @NotBlank(message = "A forma de pagamento é obrigatória.")
     private String formaPagamento;
 
     private boolean simularRecusa = false;

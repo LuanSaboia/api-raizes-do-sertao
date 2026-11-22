@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
-public class PagamentoMockGateway {
+public class PagamentoGateway {
 
     public record ResultadoPagamento(boolean aprovado, String transacaoId, String mensagem) {}
 

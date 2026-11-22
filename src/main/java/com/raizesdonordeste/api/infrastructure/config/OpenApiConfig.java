@@ -20,7 +20,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("API RESTful - Rede Raízes do Nordeste")
                         .version("1.0.0")
-                        .description("API multicanal para gestão de cardápio, pedidos, controle de estoque por unidade e pagamentos mockados.")
+                        .description("API multicanal para gestão de cardápio, pedidos, controle de estoque por unidade e pagamentos.")
                         .contact(new Contact()
                                 .name("Equipe Raízes do Nordeste")
                                 .email("contato@raizesdonordeste.com.br")))

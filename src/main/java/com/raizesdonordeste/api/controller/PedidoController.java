@@ -41,6 +41,6 @@ public class PedidoController {
     public ResponseEntity<PagamentoResponseDTO> pagar(
             @PathVariable Long id,
             @RequestBody @Valid PagamentoRequestDTO dto) {
-        return ResponseEntity.ok(pedidoService.processarPagamentoMock(id, dto));
+        return ResponseEntity.ok(pedidoService.processarPagamento(id, dto));
     }
 }

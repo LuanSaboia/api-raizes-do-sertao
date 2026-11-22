@@ -14,7 +14,7 @@ import com.raizesdonordeste.api.domain.model.Pedido;
 import com.raizesdonordeste.api.domain.model.Produto;
 import com.raizesdonordeste.api.domain.model.Unidade;
 import com.raizesdonordeste.api.domain.model.Usuario;
-import com.raizesdonordeste.api.infrastructure.mock.PagamentoMockGateway;
+import com.raizesdonordeste.api.infrastructure.mock.PagamentoGateway;
 import com.raizesdonordeste.api.infrastructure.repository.EstoqueUnidadeRepository;
 import com.raizesdonordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizesdonordeste.api.infrastructure.repository.ProdutoRepository;
@@ -37,7 +37,7 @@ public class PedidoService {
         private final UsuarioRepository usuarioRepository;
         private final ProdutoRepository produtoRepository;
         private final EstoqueUnidadeRepository estoqueUnidadeRepository;
-        private final PagamentoMockGateway pagamentoMockGateway;
+        private final PagamentoGateway pagamentoGateway;
         private final AuditoriaService auditoriaService;
 
         @Transactional
@@ -117,7 +117,7 @@ public class PedidoService {
         }
 
         @Transactional
-        public PagamentoResponseDTO processarPagamentoMock(Long pedidoId, PagamentoRequestDTO dto) {
+        public PagamentoResponseDTO processarPagamento(Long pedidoId, PagamentoRequestDTO dto) {
                 Pedido pedido = pedidoRepository.findById(pedidoId)
                                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado ID: " + pedidoId));
 
@@ -129,7 +129,7 @@ public class PedidoService {
                                         "Status atual: " + pedido.getStatus());
                 }
 
-                var resultado = pagamentoMockGateway.processarPagamento(
+                var resultado = pagamentoGateway.processarPagamento(
                                 pedido.getId(),
                                 pedido.getValorTotal(),
                                 dto.getFormaPagamento(),
