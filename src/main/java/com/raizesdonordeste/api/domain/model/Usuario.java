@@ -1,0 +1,36 @@
+package com.raizesdonordeste.api.domain.model;
+
+import com.raizesdonordeste.api.domain.enums.PerfilUsuario;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table (name = "usuarios")
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor 
+public class Usuario {
+
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column (nullable = false)
+    private String nome;
+
+    @Column (nullable = false, unique = true)
+    private String email;
+
+    @Column (nullable = false)
+    private String senha;
+
+    @Enumerated (EnumType.STRING)
+    private PerfilUsuario perfil;
+
+    @Column (name = "consentimento_lgpd", nullable = false)
+    private Boolean consentimentoLgpd = false;
+
+}
