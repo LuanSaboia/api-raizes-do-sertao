@@ -1,252 +1,225 @@
 {
   "info": {
     "name": "API Raízes do Nordeste - UNINTER 2026",
-    "description": "Coleção oficial de testes da API RESTful Raízes do Nordeste (Autenticação JWT, Multicanalidade, Estoque, Pagamento Mock e Cenários de Erro).",
+    "description": "Coleção oficial de testes da API RESTful Raízes do Nordeste organizada por módulos (Auth, Produtos, Pedidos, Pagamento e Erros/Validações).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8080",
-      "type": "string"
-    },
-    {
-      "key": "token_admin",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "token_cliente",
-      "value": "",
-      "type": "string"
-    }
+    { "key": "base_url", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token_admin", "value": "", "type": "string" },
+    { "key": "token_cliente", "value": "", "type": "string" }
   ],
   "item": [
     {
-      "name": "1. Auth - Login Admin (200 OK)",
-      "event": [
+      "name": "Auth",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "if (jsonData.accessToken) {",
-              "    pm.collectionVariables.set('token_admin', jsonData.accessToken);",
-              "}"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"admin@raizes.com.br\",\n  \"senha\": \"123456\"\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/auth/login",
-          "host": ["{{base_url}}"],
-          "path": ["auth", "login"]
-        }
-      }
-    },
-    {
-      "name": "2. Auth - Login Cliente Maria (200 OK)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "if (jsonData.accessToken) {",
-              "    pm.collectionVariables.set('token_cliente', jsonData.accessToken);",
-              "}"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"maria@email.com\",\n  \"senha\": \"123456\"\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/auth/login",
-          "host": ["{{base_url}}"],
-          "path": ["auth", "login"]
-        }
-      }
-    },
-    {
-      "name": "3. Produtos - Listar Cardápio Público (200 OK)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/produtos",
-          "host": ["{{base_url}}"],
-          "path": ["produtos"]
-        }
-      }
-    },
-    {
-      "name": "4. Pedidos - Criar Pedido via TOTEM (201 Created)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_cliente}}"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"TOTEM\",\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    },\n    {\n      \"produtoId\": 2,\n      \"quantidade\": 1\n    }\n  ]\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/pedidos",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos"]
-        }
-      }
-    },
-    {
-      "name": "5. Pedidos - Processar Pagamento Mock Aprovado (200 OK)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_cliente}}"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"formaPagamento\": \"PIX\",\n  \"simularRecusa\": false\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/pedidos/1/pagamento",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos", "1", "pagamento"]
-        }
-      }
-    },
-    {
-      "name": "6. Pedidos - Listar por Canal com Admin (200 OK)",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_admin}}"
-          }
-        ],
-        "url": {
-          "raw": "{{base_url}}/pedidos?canalPedido=TOTEM",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos"],
-          "query": [
+          "name": "Login válido (Cliente)",
+          "event": [
             {
-              "key": "canalPedido",
-              "value": "TOTEM"
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) { pm.collectionVariables.set('token_cliente', jsonData.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
             }
-          ]
-        }
-      }
-    },
-    {
-      "name": "7. [Erro] Pedidos - Acesso Negado Perfil Cliente (403 Forbidden)",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_cliente}}"
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maria@email.com\",\n  \"senha\": \"123456\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
           }
-        ],
-        "url": {
-          "raw": "{{base_url}}/pedidos",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos"]
-        }
-      }
-    },
-    {
-      "name": "8. [Erro] Pedidos - Estoque Insuficiente (409 Conflict)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_cliente}}"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"APP\",\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 999\n    }\n  ]\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/pedidos",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos"]
+        {
+          "name": "Login válido (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) { pm.collectionVariables.set('token_admin', jsonData.accessToken); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@raizes.com.br\",\n  \"senha\": \"123456\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
+          }
         }
-      }
+      ]
     },
     {
-      "name": "9. [Erro] Pedidos - Canal Inválido (400 Bad Request)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token_cliente}}"
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Listar cardápio público",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/produtos"
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"IFOOD\",\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 1\n    }\n  ]\n}"
-        },
-        "url": {
-          "raw": "{{base_url}}/pedidos",
-          "host": ["{{base_url}}"],
-          "path": ["pedidos"]
         }
-      }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Criar pedido via TOTEM",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"TOTEM\",\n  \"itens\": [\n    { \"produtoId\": 1, \"quantidade\": 2 },\n    { \"produtoId\": 2, \"quantidade\": 1 }\n  ]\n}"
+            },
+            "url": "{{base_url}}/pedidos"
+          }
+        },
+        {
+          "name": "Listar por canal (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+            ],
+            "url": "{{base_url}}/pedidos?canalPedido=TOTEM"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pagamento",
+      "item": [
+        {
+          "name": "Pagamento mock aprovado",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"formaPagamento\": \"PIX\",\n  \"simularRecusa\": false\n}"
+            },
+            "url": "{{base_url}}/pedidos/1/pagamento"
+          }
+        },
+        {
+          "name": "Pagamento mock recusado",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"formaPagamento\": \"CARTAO\",\n  \"simularRecusa\": true\n}"
+            },
+            "url": "{{base_url}}/pedidos/2/pagamento"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Erros e Validações",
+      "item": [
+        {
+          "name": "Acesso sem token (401)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/pedidos"
+          }
+        },
+        {
+          "name": "Perfil sem permissão (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "url": "{{base_url}}/pedidos"
+          }
+        },
+        {
+          "name": "Campo obrigatório ausente (422)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maria@email.com\",\n  \"senha\": \"\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        },
+        {
+          "name": "Formato inválido canalPedido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"IFOOD\",\n  \"itens\": [{ \"produtoId\": 1, \"quantidade\": 1 }]\n}"
+            },
+            "url": "{{base_url}}/pedidos"
+          }
+        },
+        {
+          "name": "Produto inexistente (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"APP\",\n  \"itens\": [{ \"produtoId\": 999, \"quantidade\": 1 }]\n}"
+            },
+            "url": "{{base_url}}/pedidos"
+          }
+        },
+        {
+          "name": "Estoque insuficiente (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_cliente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"usuarioId\": 2,\n  \"canalPedido\": \"APP\",\n  \"itens\": [{ \"produtoId\": 1, \"quantidade\": 999 }]\n}"
+            },
+            "url": "{{base_url}}/pedidos"
+          }
+        }
+      ]
     }
   ]
 }
